@@ -1,0 +1,289 @@
+include:
+  - docassemble.MAVirtualCourt:basic-questions.yml
+---
+comment: |
+  The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
+metadata:
+  title: |
+    Housing Pre-Trial Memorandum for Defendant
+  short title: |
+    Defendant's Housing Pre-Trial Memo
+---
+comment: |
+  This section is used by MAVirtualCourts to control how some of the questions work.
+mandatory: True
+code: |
+  interview_metadata # make sure we initialize the object
+  if not defined("interview_metadata['housing_eviction_pretrial_memorandum']"):
+    interview_metadata.initializeObject('housing_eviction_pretrial_memorandum')
+  interview_metadata['housing_eviction_pretrial_memorandum'].update({
+    'title': 'Housing Pre-Trial Memorandum for Defendant',
+    'short title': 'Defendant\'s Housing Pre-Trial Memo',
+    'description': 'This is a pre-trial memorandum for the Defendant (Tenant) to provide to the Court during a scheduled pre-trial conference regarding a possible eviction.',
+    'original_form': '',
+    'allowed courts': [
+      'Boston Municipal Court',
+      'District Court',
+      'Housing Court',
+      'Superior Court',
+    ],
+    'categories': [
+      'Housing',
+    ],
+    'logic block variable': 'housing_eviction_pretrial_memorandum',
+    'attachment block variable': 'housing_eviction_pretrial_memorandum_attachment',
+    'typical role': 'defendant',
+  })
+---
+features:
+  navigation: True
+---
+sections:
+  - review_housing_eviction_pretrial_memorandum: Review your answers
+---
+id: interview_order_housing_eviction_pretrial_memorandum
+code: |
+  # This is a placeholder to control logic flow in this interview
+
+  basic_questions_intro_screen 
+  housing_eviction_pretrial_memorandum_intro
+  # Set the allowed ys for this interview
+  allowed_courts = interview_metadata["housing_eviction_pretrial_memorandum"]["allowed courts"]
+  nav.set_section('review_housing_eviction_pretrial_memorandum')
+  user_role = 'defendant'
+  statement_of_the_case
+  rental_address_city
+  contested_issues_of_fact
+  set_progress(10.0)
+  defendant_estimated_trial_time
+  date_of_settlement_meeting
+  # Set the answer file name.
+  set_parts(subtitle=str(users))
+  set_progress(20.0)
+  courts[0]
+  users[0]
+  str(defendants)
+  set_progress(30.0)
+  str(plaintiffs)
+  courts[0].address.county
+  set_progress(40.0)
+  users[0].address.address
+  docket_numbers[0]
+  signature_date
+  # Save (anonymized) interview statistics.
+  store_variables_snapshot(data={'zip': users[0].address.zip})
+  housing_eviction_pretrial_memorandum_preview_question # Pre-canned preview screen
+  basic_questions_signature_flow
+  users[0].signature
+  housing_eviction_pretrial_memorandum = True
+---
+comment: |
+  This question is used to introduce your interview. Please customize
+id: Housing Pre-Trial Memorandum for Defendant
+continue button field: housing_eviction_pretrial_memorandum_intro
+question: |
+  Housing Pre-Trial Memorandum for Defendant
+subquestion: |
+  This is a pre-trial memorandum for the Defendant (Tenant) to provide to the Court during a scheduled pre-trial conference regarding a possible eviction.
+---
+id: Review your form before you sign it
+continue button field: housing_eviction_pretrial_memorandum_preview_question
+question: |
+  Review your form before you sign it
+subquestion: |
+  Here is a preview of the form you'll sign on the next page. 
+  
+   ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
+---
+id: Building your case
+question: |
+  Building your case
+subquestion: |
+  On this screen, provide a statement of your case, i.e. why you are in Court today, what your argument is, and what relief you are requesting.
+fields:
+  - 'Please provide a statement of your case:': statement_of_the_case
+    input type: area
+---
+id: Information about the tenants rental property
+question: |
+  Information about the tenant's rental property
+subquestion: |
+  On this screen, provide information relating to the property you were or are currently a tenant at but currently being threatened with eviction from.
+fields:
+  - 'What is the street address of the rental property?': rental_address_street
+  - 'What city is the rental property located in?': rental_address_city
+  - 'What date did the tenancy begin per the lease?': lease_start_date
+    datatype: date
+  - 'What is the current market value of the rental property? (If you do not know, write "Not Known")': property_market_value
+---
+id: Building your case
+question: |
+  Building your case
+subquestion: |
+  On this screen, provide what issues of fact (i.e. whether you paid rent) or law (i.e. what the law is and why it benefits your case) you and the Plaintiff/Landlord have, and any contested and uncontested evidence.
+fields:
+  - 'What are the contested issues of law?': contested_issues_of_law
+    input type: area
+  - 'What are the contested issues of fact?': contested_issues_of_fact
+    input type: area
+  - 'List any contested exhibits (i.e. rent payment receipts, communications between parties, etc.)': contested_exhibits
+    input type: area
+  - 'List any uncontested exhibits (i.e. rent payment receipts, communications between parties, etc.)': uncontested_exhibits
+    input type: area
+---
+id: Building your case
+question: |
+  Building your case
+subquestion: |
+  On this screen, provide information about any witnesses and experts you and the Plaintiff/Landlord plan to have testify at trial. If there are none or if you do not know, write "Not Applicable" or "Not Known".
+fields:
+  - 'What are the names of the witnesses, if any, for the Plaintiff/Landlord?': plaintiff_witnesses
+    input type: area
+  - 'What are the names of the witnesses, if any, for the Defendant/Tenant?': defendant_witnesses
+    input type: area
+  - 'What are the names of the experts, if any, for the Plaintiff/Landlord?': plaintiff_experts
+    input type: area
+  - 'What are the names of the experts, if any, for the Defendant/Tenant?': defendant_experts
+    input type: area
+---
+id: Building your case
+question: |
+  Building your case
+subquestion: |
+  On this screen, provide the Court will how much estimated trial time you and the Plaintiff/Landlord will need in order to plead your cases, and whether a settlement meeting has occurred or will occur and on what date.
+fields:
+  - 'How much time do you need to plead your case to the Court?': defendant_estimated_trial_time
+  - 'How much time does the Plaintiff/Landlord need to plead their case to the Court?': plaintiff_estimated_trial_time
+  - 'What date has a settlement meeting occurred or will occur?': date_of_settlement_meeting
+    datatype: date
+---
+progress: 100
+mandatory: True
+id: Your form is ready to download and file
+question: |
+  Your form is ready to download and file
+subquestion: |
+  Thank you ${users}. Your form is ready to download and deliver.
+  
+  Below is a preview of your form.
+  
+  ${pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['final'], filename='housing_eviction_pretrial_memorandum.pdf') }
+need: housing_eviction_pretrial_memorandum
+attachment code: housing_eviction_pretrial_memorandum_attachment['final']
+---
+objects:
+  - housing_eviction_pretrial_memorandum_attachment: DADict
+---
+attachment:
+    variable name: housing_eviction_pretrial_memorandum_attachment[i]
+    name: Defendant's Housing Pre-Trial Memo
+    filename: Defendants_Housing_PreTrial_Memo
+    docx template file: Pretrial_memo_code5.docx
+---
+id: housing_eviction_pretrial_memorandum review screen
+event: review_housing_eviction_pretrial_memorandum
+question: |
+  Placeholder Review Screen
+subquestion: |
+  Edit your answers below
+review: 
+  - Edit: contested_issues_of_fact
+    button: |
+      What are the contested issues of fact?:
+      > ${ single_paragraph(contested_issues_of_fact) }
+  - Edit: defendant_estimated_trial_time
+    button: |
+      How much time do you need to plead your case to the Court?:
+      ${ defendant_estimated_trial_time }
+  - Edit: statement_of_the_case
+    button: |
+      Please provide a statement of your case::
+      > ${ single_paragraph(statement_of_the_case) }
+  - Edit: rental_address_city
+    button: |
+      What city is the rental property located in?:
+      ${ rental_address_city }
+  - Edit: rental_address_street
+    button: |
+      What is the street address of the rental property?:
+      ${ rental_address_street }
+  - Edit: property_market_value
+    button: |
+      What is the current market value of the rental property? (If you do not know, write "Not Known"):
+      > ${ single_paragraph(property_market_value) }
+  - Edit: contested_exhibits
+    button: |
+      List any contested exhibits (i.e. rent payment receipts, communications between parties, etc.):
+      > ${ single_paragraph(contested_exhibits) }
+  - Edit: plaintiff_estimated_trial_time
+    button: |
+      How much time does the Plaintiff/Landlord need to plead their case to the Court?:
+      ${ plaintiff_estimated_trial_time }
+  - Edit: uncontested_exhibits
+    button: |
+      List any uncontested exhibits (i.e. rent payment receipts, communications between parties, etc.):
+      > ${ single_paragraph(uncontested_exhibits) }
+  - Edit: date_of_settlement_meeting
+    button: |
+      What date has a settlement meeting occurred or will occur?:
+      ${ date_of_settlement_meeting.format() }
+  - Edit: lease_start_date
+    button: |
+      What date did the tenancy begin per the lease?:
+      ${ lease_start_date.format() }
+  - Edit: contested_issues_of_law
+    button: |
+      What are the contested issues of law?:
+      > ${ single_paragraph(contested_issues_of_law) }
+  - Edit: plaintiff_witnesses
+    button: |
+      What are the names of any witnesses for the Plaintiff/Landlord?:
+      > ${ single_paragraph(plaintiff_witnesses) }
+  - Edit: defendant_witnesses
+    button: |
+      What are the names of any witnesses for the Defendant/Tenant?:
+      > ${ single_paragraph(defendant_witnesses) }
+  - Edit: plaintiff_experts
+    button: |
+      What are the names of any experts for the Plaintiff/Landlord?:
+      > ${ single_paragraph(plaintiff_experts) }
+  - Edit: defendant_experts
+    button: |
+      What are the names of any experts for the Defendant/Tenant?:
+      > ${ single_paragraph(defendant_experts) }
+  - Edit: courts[0].name.first
+    button: |
+      courts[0]:
+      ${ courts[0] }
+  - Edit: users[0].name.first
+    button: |
+      users[0]:
+      ${ users[0] }
+  - Edit: defendants[0].name.first
+    button: |
+      defendants:
+      ${ defendants }
+  - Edit: plaintiffs[0].name.first
+    button: |
+      plaintiffs:
+      ${ plaintiffs }
+  - Edit: courts[0].address.county
+    button: |
+      courts[0].address.county:
+      ${ courts[0].address.county }
+  - Edit: users[0].signature
+    button: |
+      users[0].signature:
+      ${ users[0].signature }
+  - Edit: users[0].address.address
+    button: |
+      users[0].address.address:
+      ${ users[0].address.address }
+  - Edit: docket_numbers[0].name.first
+    button: |
+      docket_numbers[0]:
+      ${ docket_numbers[0] }
+  - Edit: signature_date
+    button: |
+      signature_date:
+      ${ signature_date }
