@@ -9,6 +9,9 @@ metadata:
   short title: |
     Defendant's Housing Pre-Trial Memo
 ---
+code: |
+  interview_short_title = "Create a pre-trial memo for a housing jury trial"    
+---
 comment: |
   This section is used by MAVirtualCourts to control how some of the questions work.
 mandatory: True
