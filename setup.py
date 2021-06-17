@@ -42,10 +42,10 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
                 out.setdefault(package, []).append(prefix+name)
     return out
 
-setup(name='docassemble.housingpretrialmemo',
+setup(name='docassemble.HousingPretrialMemo',
       version='0.0.1',
       description=('This pre-trial memorandum is for any tenant to use as a pro se Defendant in any housing-related proceeding.'),
-      long_description='# docassemble.housingpretrialmemo\n\nThis pre-trial memorandum is for any tenant to use as a pro se Defendant in any housing-related proceeding.\n\n## Author\n\nbsavard@suffolk.edu\n\n',
+      long_description='# docassemble.HousingPretrialMemo\n\nThis pre-trial memorandum is for any tenant to use as a pro se Defendant in any housing-related proceeding.\n\n## Author\n\nbsavard@suffolk.edu\n\n',
       long_description_content_type='text/markdown',
       author='',
       author_email='bsavard@suffolk.edu',
@@ -55,6 +55,6 @@ setup(name='docassemble.housingpretrialmemo',
       namespace_packages=['docassemble'],
       install_requires=[],
       zip_safe=False,
-      package_data=find_package_data(where='docassemble/housingpretrialmemo/', package='docassemble.housingpretrialmemo'),
+      package_data=find_package_data(where='docassemble/HousingPretrialMemo/', package='docassemble.HousingPretrialMemo'),
      )
 
