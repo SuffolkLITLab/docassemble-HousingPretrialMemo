@@ -71,8 +71,11 @@ code: |
   courts[0].address.county
   set_progress(40.0)
   users[0].address.address
-  docket_numbers[i]
+  docket_numbers[0]
   signature_date
+  users.there_is_another = False
+  users.elements = False
+  other_parties.there_are_any = False
   # Save (anonymized) interview statistics.
   store_variables_snapshot(data={'zip': users[0].address.zip})
   housing_eviction_pretrial_memorandum_preview_question # Pre-canned preview screen
@@ -97,6 +100,14 @@ subquestion: |
   Here is a preview of the form you'll sign on the next page. 
   
    ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
+---
+id: docket numbers
+question: |
+  What is the docket number for this case?
+fields:
+  - no label: docket_numbers[0]
+    required: False
+    hint: e.g., 000YY_ _CR _ _ _ _ _ _ _
 ---
 id: Building your case
 question: |
@@ -282,10 +293,10 @@ review:
     button: |
       users[0].address.address:
       ${ users[0].address.address }
-  - Edit: docket_numbers[i].name.first
+  - Edit: docket_numbers[0].name.first
     button: |
-      docket_numbers[i]:
-      ${ docket_numbers[i] }
+      docket_numbers[0]:
+      ${ docket_numbers[0] }
   - Edit: signature_date
     button: |
       signature_date:
