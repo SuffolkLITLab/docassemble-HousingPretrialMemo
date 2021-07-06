@@ -10,7 +10,7 @@ metadata:
     Defendant's Housing Pre-Trial Memo
 ---
 code: |
-  interview_short_title = "Create a pre-trial memo for a housing jury trial"    
+  interview_short_title = "Fill out a pre-trial housing memorandum."    
 ---
 comment: |
   This section is used by MAVirtualCourts to control how some of the questions work.
@@ -101,6 +101,65 @@ subquestion: |
   
    ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
 ---
+id: basic questions intro screen
+decoration: form-lineal
+question: |
+  ${interview_short_title}: Mass Access Project
+subquestion: |
+  % if form_approved_for_email_filing:
+  The MassAccess Project can help **Massachusetts residents** complete and file court forms in 3 steps:
+  % else:
+  The MassAccess Project can help **Massachusetts residents** complete and download forms in 3 steps:
+  % endif
+  
+  Step 1. Answer questions that will fill in your form for you.  
+  Step 2. Preview the completed form.  
+  % if form_approved_for_email_filing:  
+  Step 3. Email the form to the court using this secure website and save copies
+  for yourself for later reference.  
+  % else:
+  Step 3. Download and print the final form. You will need to deliver it
+  to the court on your own.
+  % endif
+  
+  If you do not live in Massachusetts, you may be able to get help for your 
+  legal problem from [your local legal aid 
+  provider](https://www.lsc.gov/what-legal-aid/find-legal-aid).
+  
+  
+  If you have questions about this form or the court process, 
+  call the Trial Court’s Emergency HelpLine:  
+  833-91-COURT (833-912-6878)  
+  Monday-Friday  
+  8:30am - 4:30pm
+
+  % if chat_partners_available().help:
+  Live help is currently available in this interview. Click the speech bubble
+  (:comment-alt:) in the navigation bar to connect to a live advocate for help.
+  % endif
+
+fields:
+  - To continue, you must accept the [terms of use](https://massaccess.suffolklitlab.org/privacy/): acknowledged_information_use
+    datatype: checkboxes
+    none of the above: False    
+    minlength: 1
+    choices:
+      - I accept the terms of use.
+    validation messages:
+      minlength: |
+        You cannot continue unless you agree to the terms of use.        
+continue button field: basic_questions_intro_screen
+terms:
+  green words: |
+    Green words are legal terms or a short way of referring to something that needs more explanation. The definition or explanation pops up when you tap the green words.
+right: |
+  % if user_has_saved_answers:
+  ${fa_icon("bell", color="primary", size="sm")}
+  Saved answers available!  
+  
+  ${action_button_html(url_action('load_answer'), icon="folder-open", label=word("View answers"), size="sm" )}
+  % endif
+---
 id: docket numbers
 question: |
   What is the docket number for this case?
@@ -132,12 +191,14 @@ id: Building your case
 question: |
   Building your case
 subquestion: |
-  On this screen, provide what issues of fact (i.e. whether you paid rent) or law (i.e. what the law is and why it benefits your case) you and the Plaintiff/Landlord have, and any contested and uncontested evidence.
+  On this screen, provide what issues of fact or law you and the Plaintiff/Landlord have, and any contested and uncontested evidence.
 fields:
   - 'What are the contested issues of law?': contested_issues_of_law
     input type: area
+    hint: MGLA *** states the following and supports my claim because...
   - 'What are the contested issues of fact?': contested_issues_of_fact
     input type: area
+    hint: Dispute about whether payment of rent was made.
   - 'List any contested exhibits (i.e. rent payment receipts, communications between parties, etc.)': contested_exhibits
     input type: area
   - 'List any uncontested exhibits (i.e. rent payment receipts, communications between parties, etc.)': uncontested_exhibits
