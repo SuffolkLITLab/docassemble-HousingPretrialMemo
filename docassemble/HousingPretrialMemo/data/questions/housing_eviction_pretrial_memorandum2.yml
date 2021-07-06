@@ -113,19 +113,17 @@ id: Building your case
 question: |
   Building your case
 subquestion: |
-  On this screen, provide a statement of your case, i.e. why you are in Court today, what your argument is, and what relief you are requesting.
+  Provide a statement of your case.
 fields:
-  - 'Please provide a statement of your case:': statement_of_the_case
+  - 'Include why you are in court, what your argument is and what relief you are requesting:': statement_of_the_case
     input type: area
 ---
-id: Information about the tenants rental property
+id: Information about the rental property in dispute.
 question: |
-  Information about the tenant's rental property
-subquestion: |
-  On this screen, provide information relating to the property you were or are currently a tenant at but currently being threatened with eviction from.
+  Provide information about the rental property in dispute.
 fields:
-  - 'What is the street address of the rental property?': rental_address_street
-  - 'What city is the rental property located in?': rental_address_city
+  - 'What is the street address?': rental_address_street
+  - 'What is the city?': rental_address_city
   - 'What date did the tenancy begin per the lease?': lease_start_date
     datatype: date
   - 'What is the current market value of the rental property? (If you do not know, write "Not Known")': property_market_value
