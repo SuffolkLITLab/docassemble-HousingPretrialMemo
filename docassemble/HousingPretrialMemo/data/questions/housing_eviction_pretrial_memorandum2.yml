@@ -183,7 +183,9 @@ question: |
 fields:
   - 'What is the street address?': rental_address_street
   - 'What is the city?': rental_address_city
-  - 'What date did the tenancy begin per the lease?': lease_start_date
+  - 'When did your tenancy begin?': lease_start_date
+    help: |
+      As stated on the lease.
     datatype: date
   - 'What is the current market value of the rental property? (If you do not know, write "Not Known")': property_market_value
 ---
