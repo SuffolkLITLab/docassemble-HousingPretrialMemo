@@ -10,7 +10,7 @@ metadata:
     Defendant's Housing Pre-Trial Memo
 ---
 code: |
-  interview_short_title = "Fill out a pre-trial housing memorandum."    
+  interview_short_title = "Create a pre-trial memo for a housing jury trial"    
 ---
 comment: |
   This section is used by MAVirtualCourts to control how some of the questions work.
@@ -71,11 +71,8 @@ code: |
   courts[0].address.county
   set_progress(40.0)
   users[0].address.address
-  docket_numbers[0]
+  docket_numbers[i]
   signature_date
-  users.there_is_another = False
-  users.elements = False
-  other_parties.there_are_any = False
   # Save (anonymized) interview statistics.
   store_variables_snapshot(data={'zip': users[0].address.zip})
   housing_eviction_pretrial_memorandum_preview_question # Pre-canned preview screen
@@ -101,135 +98,73 @@ subquestion: |
   
    ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
 ---
-id: basic questions intro screen
-decoration: form-lineal
-question: |
-  ${interview_short_title}: Mass Access Project
-subquestion: |
-  % if form_approved_for_email_filing:
-  The MassAccess Project can help **Massachusetts residents** complete and file court forms in 3 steps:
-  % else:
-  The MassAccess Project can help **Massachusetts residents** complete and download forms in 3 steps:
-  % endif
-  
-  Step 1. Answer questions that will fill in your form for you.  
-  Step 2. Preview the completed form.  
-  % if form_approved_for_email_filing:  
-  Step 3. Email the form to the court using this secure website and save copies
-  for yourself for later reference.  
-  % else:
-  Step 3. Download and print the final form. You will need to deliver it
-  to the court on your own.
-  % endif
-  
-  If you do not live in Massachusetts, you may be able to get help for your 
-  legal problem from [your local legal aid 
-  provider](https://www.lsc.gov/what-legal-aid/find-legal-aid).
-  
-  
-  If you have questions about this form or the court process, 
-  call the Trial Court’s Emergency HelpLine:  
-  833-91-COURT (833-912-6878)  
-  Monday-Friday  
-  8:30am - 4:30pm
-
-  % if chat_partners_available().help:
-  Live help is currently available in this interview. Click the speech bubble
-  (:comment-alt:) in the navigation bar to connect to a live advocate for help.
-  % endif
-
-fields:
-  - To continue, you must accept the [terms of use](https://massaccess.suffolklitlab.org/privacy/): acknowledged_information_use
-    datatype: checkboxes
-    none of the above: False    
-    minlength: 1
-    choices:
-      - I accept the terms of use.
-    validation messages:
-      minlength: |
-        You cannot continue unless you agree to the terms of use.        
-continue button field: basic_questions_intro_screen
-terms:
-  green words: |
-    Green words are legal terms or a short way of referring to something that needs more explanation. The definition or explanation pops up when you tap the green words.
-right: |
-  % if user_has_saved_answers:
-  ${fa_icon("bell", color="primary", size="sm")}
-  Saved answers available!  
-  
-  ${action_button_html(url_action('load_answer'), icon="folder-open", label=word("View answers"), size="sm" )}
-  % endif
----
-id: docket numbers
-question: |
-  What is the docket number for this case?
-fields:
-  - no label: docket_numbers[0]
-    required: False
-    hint: e.g., 000YY_ _CR _ _ _ _ _ _ _
----
 id: Building your case
 question: |
-  Building your case
+  Explain why you are in court.
 subquestion: |
-  Provide a statement of your case.
+  Include what your argument is and what relief you are requesting.
 fields:
-  - 'Include why you are in court, what your argument is and what relief you are requesting:': statement_of_the_case
-    input type: area
+  - 'Statement:': statement_of_the_case
+    input type: areawide
 ---
-id: Information about the rental property in dispute.
+id: Information about the tenants rental property
 question: |
-  Provide information about the rental property in dispute.
+  Provide information about the property in dispute.
 fields:
-  - 'What is the street address?': rental_address_street
-  - 'What is the city?': rental_address_city
-  - 'When did your tenancy begin?': lease_start_date
-    help: |
-      As stated on the lease.
+  - 'What is the street address of the rental property?': rental_address_street
+  - 'What city is the rental property located in?': rental_address_city
+  - 'What date did the tenancy begin per the lease?': lease_start_date
     datatype: date
-  - 'What is the current market value of the rental property? (If you do not know, write "Not Known")': property_market_value
+  - 'What is the current market value of the rental property?': property_market_value
+    hide if: dont_know_market_value
 ---
 id: Building your case
 question: |
-  Building your case
-subquestion: |
-  On this screen, provide what issues of fact or law you and the Plaintiff/Landlord have, and any contested and uncontested evidence.
+  Explain in detail the issues you and the Landlord are having.
+  Include a description of evidence.
 fields:
-  - 'What are the contested issues of law?': contested_issues_of_law
+  - 'Issues of law in dispute': contested_issues_of_law
     input type: area
-    hint: MGLA *** states the following and supports my claim because...
-  - 'What are the contested issues of fact?': contested_issues_of_fact
+    hint: i.e. whether yoy paid rent
+  - 'Issues of fact in dispute': contested_issues_of_fact
     input type: area
-    hint: Dispute about whether payment of rent was made.
-  - 'List any contested exhibits (i.e. rent payment receipts, communications between parties, etc.)': contested_exhibits
+    hint: i.e. what the law is and why it benefits your case.
+  - 'Evidence in dispute': contested_exhibits
     input type: area
-  - 'List any uncontested exhibits (i.e. rent payment receipts, communications between parties, etc.)': uncontested_exhibits
+    hint: i.e. rent payment receipts, communications between parties, etc.
+  - 'Evidence not in dispute': uncontested_exhibits
     input type: area
+    hint: i.e. rent payment receipts, communications between parties, etc.
 ---
 id: Building your case
 question: |
-  Building your case
-subquestion: |
-  On this screen, provide information about any witnesses and experts you and the Plaintiff/Landlord plan to have testify at trial. If there are none or if you do not know, write "Not Applicable" or "Not Known".
+  Provide information about witnesses and experts you and the Landlord plan to have testify at trial.
 fields:
-  - 'What are the names of the witnesses, if any, for the Plaintiff/Landlord?': plaintiff_witnesses
+  - 'Witnesses for the landlord': plaintiff_witnesses
     input type: area
-  - 'What are the names of the witnesses, if any, for the Defendant/Tenant?': defendant_witnesses
+    help:  |
+      Write 'N/A' if there are non or you do not know.
+  - 'Witnesses for the tenant': defendant_witnesses
     input type: area
-  - 'What are the names of the experts, if any, for the Plaintiff/Landlord?': plaintiff_experts
+    hint: i.e. yourself
+    help:  |
+      Write 'N/A' if there are non or you do not know.
+  - 'Experts for the landlord': plaintiff_experts
     input type: area
-  - 'What are the names of the experts, if any, for the Defendant/Tenant?': defendant_experts
+    help:  |
+      Write 'N/A' if there are non or you do not know.
+  - 'Experts for the tenant': defendant_experts
     input type: area
+    help:  |
+      Write 'N/A' if there are non or you do not know.
 ---
 id: Building your case
 question: |
-  Building your case
-subquestion: |
-  On this screen, provide the Court will how much estimated trial time you and the Plaintiff/Landlord will need in order to plead your cases, and whether a settlement meeting has occurred or will occur and on what date.
+  Estimate how much  trial time you and the Landlord will need to plead your cases, and provide details about a settlement meeting.
 fields:
-  - 'How much time do you need to plead your case to the Court?': defendant_estimated_trial_time
-  - 'How much time does the Plaintiff/Landlord need to plead their case to the Court?': plaintiff_estimated_trial_time
-  - 'What date has a settlement meeting occurred or will occur?': date_of_settlement_meeting
+  - 'Your estimated time to plead case': defendant_estimated_trial_time
+  - 'Landlord estimated time to plead case': plaintiff_estimated_trial_time
+  - 'Date settle meeting has occured or will occur': date_of_settlement_meeting
     datatype: date
 ---
 progress: 100
@@ -354,10 +289,10 @@ review:
     button: |
       users[0].address.address:
       ${ users[0].address.address }
-  - Edit: docket_numbers[0].name.first
+  - Edit: docket_numbers[i].name.first
     button: |
-      docket_numbers[0]:
-      ${ docket_numbers[0] }
+      docket_numbers[i]:
+      ${ docket_numbers[i] }
   - Edit: signature_date
     button: |
       signature_date:
