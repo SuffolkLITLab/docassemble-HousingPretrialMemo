@@ -53,9 +53,13 @@ code: |
   # Set the allowed ys for this interview
   allowed_courts = interview_metadata["housing_eviction_pretrial_memorandum"]["allowed courts"]
   nav.set_section('review_housing_eviction_pretrial_memorandum')
+  users[0]
   user_role = 'defendant'
+  users[0].address.address
+  courts[0]
+  users.there_is_another = False
+  other_parties.there_are_any = False
   statement_of_the_case
-  rental_address_city
   contested_issues_of_fact
   set_progress(10.0)
   defendant_estimated_trial_time
@@ -63,15 +67,12 @@ code: |
   # Set the answer file name.
   set_parts(subtitle=str(users))
   set_progress(20.0)
-  courts[0]
-  users[0]
   str(defendants)
   set_progress(30.0)
   str(plaintiffs)
   courts[0].address.county
   set_progress(40.0)
-  users[0].address.address
-  docket_numbers[i]
+  docket_number[0]
   signature_date
   # Save (anonymized) interview statistics.
   store_variables_snapshot(data={'zip': users[0].address.zip})
@@ -98,6 +99,32 @@ subquestion: |
   
    ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
 ---
+id: docket number
+question: |
+  What is the docket number for your case?
+fields:
+  - no label: docket_number
+    required: False
+continue button field: ask_docket_number
+---
+id: your address
+question: |
+  What is your address?
+subquestion: |
+  What address should the court use to mail papers to you?
+fields:
+  - Street address: users[0].address.address
+    address autocomplete: True
+  - Unit: users[0].address.unit
+    required: False
+  - City: users[0].address.city
+  - State: users[0].address.state
+    code: |
+      states_list()
+    default: MA      
+  - Zip: users[0].address.zip
+    required: False
+---
 id: Building your case
 question: |
   Explain why you are in court.
@@ -111,12 +138,10 @@ id: Information about the tenants rental property
 question: |
   Provide information about the property in dispute.
 fields:
-  - 'What is the street address of the rental property?': rental_address_street
-  - 'What city is the rental property located in?': rental_address_city
-  - 'What date did the tenancy begin per the lease?': lease_start_date
+  - 'What date did the lease begin on?': lease_start_date
     datatype: date
   - 'What is the current market value of the rental property?': property_market_value
-    hide if: dont_know_market_value
+    help: 'Write N/A if not applicable or not know'
 ---
 id: Building your case
 question: |
@@ -125,7 +150,7 @@ question: |
 fields:
   - 'Issues of law in dispute': contested_issues_of_law
     input type: area
-    hint: i.e. whether yoy paid rent
+    hint: i.e. whether you paid rent
   - 'Issues of fact in dispute': contested_issues_of_fact
     input type: area
     hint: i.e. what the law is and why it benefits your case.
@@ -163,8 +188,12 @@ question: |
   Estimate how much  trial time you and the Landlord will need to plead your cases, and provide details about a settlement meeting.
 fields:
   - 'Your estimated time to plead case': defendant_estimated_trial_time
+    hint: |
+      i.e. 30 minutes, 1 hour, etc.
   - 'Landlord estimated time to plead case': plaintiff_estimated_trial_time
-  - 'Date settle meeting has occured or will occur': date_of_settlement_meeting
+    hint: |
+      i.e. 30 minutes, 1 hour, etc.
+  - 'Date settlement meeting has occured or will occur': date_of_settlement_meeting
     datatype: date
 ---
 progress: 100
@@ -209,14 +238,10 @@ review:
     button: |
       Please provide a statement of your case::
       > ${ single_paragraph(statement_of_the_case) }
-  - Edit: rental_address_city
+  - Edit: users[0].address.address
     button: |
-      What city is the rental property located in?:
-      ${ rental_address_city }
-  - Edit: rental_address_street
-    button: |
-      What is the street address of the rental property?:
-      ${ rental_address_street }
+      What is your address?:
+      ${ users[0].address.on_one_line() }
   - Edit: property_market_value
     button: |
       What is the current market value of the rental property? (If you do not know, write "Not Known"):
@@ -285,14 +310,10 @@ review:
     button: |
       users[0].signature:
       ${ users[0].signature }
-  - Edit: users[0].address.address
+  - Edit: docket_number[0].name.first
     button: |
-      users[0].address.address:
-      ${ users[0].address.address }
-  - Edit: docket_numbers[i].name.first
-    button: |
-      docket_numbers[i]:
-      ${ docket_numbers[i] }
+      docket_number[0]:
+      ${ docket_number[0] }
   - Edit: signature_date
     button: |
       signature_date:
