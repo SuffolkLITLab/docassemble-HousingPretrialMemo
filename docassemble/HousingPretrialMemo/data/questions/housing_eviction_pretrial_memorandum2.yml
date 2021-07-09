@@ -53,7 +53,7 @@ code: |
   # Set the allowed ys for this interview
   allowed_courts = interview_metadata["housing_eviction_pretrial_memorandum"]["allowed courts"]
   nav.set_section('review_housing_eviction_pretrial_memorandum')
-  users[0]
+  users[0].name
   user_role = 'defendant'
   users[0].address.address
   courts[0]
@@ -72,7 +72,7 @@ code: |
   str(plaintiffs)
   courts[0].address.county
   set_progress(40.0)
-  docket_number[0]
+  docket_number
   signature_date
   # Save (anonymized) interview statistics.
   store_variables_snapshot(data={'zip': users[0].address.zip})
@@ -105,13 +105,13 @@ question: |
 fields:
   - no label: docket_number
     required: False
-continue button field: ask_docket_number
+    hint: e.g., 000YY_ _CR _ _ _ _ _ _ _
 ---
 id: your address
 question: |
   What is your address?
 subquestion: |
-  What address should the court use to mail papers to you?
+  What address should the court use to mail papers to you? (eviction threat?)
 fields:
   - Street address: users[0].address.address
     address autocomplete: True
@@ -310,10 +310,10 @@ review:
     button: |
       users[0].signature:
       ${ users[0].signature }
-  - Edit: docket_number[0].name.first
+  - Edit: docket_number
     button: |
-      docket_number[0]:
-      ${ docket_number[0] }
+      docket_number:
+      ${ docket_number }
   - Edit: signature_date
     button: |
       signature_date:
