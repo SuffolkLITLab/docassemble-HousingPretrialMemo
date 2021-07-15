@@ -87,7 +87,7 @@ continue button field: housing_eviction_pretrial_memorandum_intro
 question: |
   Housing Pre-Trial Memorandum for Defendant
 subquestion: |
-  This is a pre-trial memorandum for the Defendant (Tenant) to provide to the Court during a scheduled pre-trial conference regarding a possible eviction.
+  This is a letter to be completed before triak by the defendant (tenant) for the Court if the plaintiff (landlord) is threatening eviction.
 ---
 id: Review your form before you sign it
 continue button field: housing_eviction_pretrial_memorandum_preview_question
@@ -97,6 +97,19 @@ subquestion: |
   Here is a preview of the form you'll sign on the next page. 
   
    ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
+---
+id: your name
+question:  |
+  Tenant, what is your name?
+fields:
+  - First Name: users[0].name.first
+  - Middle Name: users[0].name.middle
+    required: False
+  - Last Name: users[0].name.last
+  - Suffix: users[0].name.suffix
+    code: |
+      name_suffix()
+    required: False  
 ---
 id: any other users
 question: |
