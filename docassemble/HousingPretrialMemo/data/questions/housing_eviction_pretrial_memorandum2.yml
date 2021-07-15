@@ -87,7 +87,7 @@ continue button field: housing_eviction_pretrial_memorandum_intro
 question: |
   Housing Pre-Trial Memorandum for Defendant
 subquestion: |
-  This is a letter to be completed before triak by the defendant (tenant) for the Court if the plaintiff (landlord) is threatening eviction.
+  This is a letter to be completed before trial by the defendant (tenant) for the Court if the plaintiff (landlord) is threatening eviction.
 ---
 id: Review your form before you sign it
 continue button field: housing_eviction_pretrial_memorandum_preview_question
@@ -100,7 +100,7 @@ subquestion: |
 ---
 id: your name
 question:  |
-  Tenant, what is your name?
+  What is your name?
 fields:
   - First Name: users[0].name.first
   - Middle Name: users[0].name.middle
@@ -113,18 +113,12 @@ fields:
 ---
 id: any other users
 question: |
-  Did anyone else file with you?
-subquestion: |
-  % if len(users.elements) > 1:
-  You have already told us about ${comma_and_list(users.complete_elements())}.
-  % else:
-  Is there another tenant filing with you?
-  % endif
+  Is another tenant filing with you?
 yesno: users.there_is_another 
 ---
 id: other users names
 question: |
-  What is the name of the ${ ordinal(i) } tenant in this case?
+  What is the name of the ${ ordinal(i) } tenant?
 fields:
   - First Name: users[i].name.first
   - Middle Name: users[i].name.middle
@@ -153,10 +147,10 @@ fields:
 ---
 id: your address
 question: |
-  What is your address?
-subquestion: |
-  What address should the court use to mail papers to you? (eviction threat?)
+  What is the address of the rental property?
 fields:
+  - Is this where you are currently living?: current_address
+    datatype: yesno
   - Street address: users[0].address.address
     address autocomplete: True
   - Unit: users[0].address.unit
@@ -175,7 +169,7 @@ question: |
   Please list the name of each **defendant** or respondent in this
   case below
   % else:
-  List the name of each **plaintiff** or landlord below.
+  List each landlord below.
   % endif
 subquestion: |
   Click "${word("Add another")}" to add more.
@@ -185,10 +179,10 @@ list collect:
     % if users==plaintiffs:
     Defendant/Respondent ${i+1}    
     % else:
-    Plaintiff/Landlord ${i+1}
+     ${i+1})
     % endif
 fields:
-  - Are they a person, or a business?: other_parties[i].person_type
+  - Is the landlord a person or a business?: other_parties[i].person_type
     input type: radio
     choices:
       - Business or organization: business
@@ -223,11 +217,9 @@ fields:
 ---
 id: Building your case
 question: |
-  Explain why you are in court.
-subquestion: |
-  Include what your argument is and what relief you are requesting.
+  Tell the court why the landlord should not evict you
 fields:
-  - 'Statement:': statement_of_the_case
+  - 'What help are you asking from the court?': statement_of_the_case
     input type: area
 ---
 id: Information about the tenants rental property
@@ -241,21 +233,21 @@ fields:
 ---
 id: Building your case
 question: |
-  Explain in detail the issues you and the Landlord are having.
-  Include a description of evidence.
+  Explain the issues between you and the Landlord.
+  Describe the evidence.
 fields:
   - 'Issues of law in dispute': contested_issues_of_law
     input type: area
-    hint: i.e. whether you paid rent
+    help: i.e. whether you paid rent
   - 'Issues of fact in dispute': contested_issues_of_fact
     input type: area
-    hint: i.e. what the law is and why it benefits your case.
+    help: i.e. what the law is and why it benefits your case.
   - 'Evidence in dispute': contested_exhibits
     input type: area
-    hint: i.e. rent payment receipts, communications between parties, etc.
+    help: i.e. rent payment receipts, communications between parties, etc.
   - 'Evidence not in dispute': uncontested_exhibits
     input type: area
-    hint: i.e. rent payment receipts, communications between parties, etc.
+    help: i.e. rent payment receipts, communications between parties, etc.
 ---
 id: Building your case
 question: |
@@ -281,15 +273,17 @@ fields:
 ---
 id: Building your case
 question: |
-  Estimate how much  trial time you and the Landlord will need to plead your cases, and provide details about a settlement meeting.
+  How much time will you need to plead your case?
 fields:
-  - 'Your estimated time to plead case': defendant_estimated_trial_time
-    hint: |
+  - 'Your time': defendant_estimated_trial_time
+    help: |
       i.e. 30 minutes, 1 hour, etc.
-  - 'Landlord estimated time to plead case': plaintiff_estimated_trial_time
-    hint: |
+  - 'Landlords time': plaintiff_estimated_trial_time
+    help: |
       i.e. 30 minutes, 1 hour, etc.
-  - 'Date settlement meeting has occured or will occur': date_of_settlement_meeting
+  - 'Date of settlement meeting': date_of_settlement_meeting
+    help: |
+      Whether it has already occured or will occur.
     datatype: date
 ---
 progress: 100
