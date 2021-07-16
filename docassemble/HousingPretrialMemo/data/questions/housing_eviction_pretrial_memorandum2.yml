@@ -57,6 +57,13 @@ code: |
   user_role = 'defendant'
   users[0].address.address
   courts[0]
+  have_lease
+  if have_lease == True:
+    lease_start_date
+  if are_experts == True:
+    plaintiff_experts
+  if are_experts == True:
+    defendant_experts
   other_parties.there_are_any = True
   statement_of_the_case
   contested_issues_of_fact
@@ -141,9 +148,10 @@ id: docket number
 question: |
   What is the docket number for your case?
 fields:
-  - no label: docket_number
+  - ':': docket_number
     required: False
     hint: e.g., 000YY_ _CR _ _ _ _ _ _ _
+    help: The docket number can usually be found in the top right corner of the Summons and Complaint.
 ---
 id: your address
 question: |
@@ -209,7 +217,9 @@ fields:
 ---
 id: signature date
 question: |
-  When do you plan to file this memorandum?
+  When will you file this memorandum?
+subquestion: |
+  The default is "today". Change the date if you plan to file another day.
 fields: 
   - Date: signature_date
     datatype: date
@@ -224,56 +234,63 @@ fields:
 ---
 id: Information about the tenants rental property
 question: |
-  Provide information about the property in dispute.
+  Tell the court about the property you are renting
 fields:
-  - 'What date did the lease begin on?': lease_start_date
+  - 'Do you have a lease?': have_lease
+    datatype: yesno
+  - 'What is the start date of the lease?': lease_start_date
     datatype: date
+    required: False
   - 'What is the current market value of the rental property?': property_market_value
-    help: 'Write N/A if not applicable or not know'
+    help: 'Write N/A if not applicable or you do not know.'
 ---
 id: Building your case
 question: |
   Explain the issues between you and the Landlord.
   Describe the evidence.
 fields:
-  - 'Issues of law in dispute': contested_issues_of_law
+  - 'Issues of law': contested_issues_of_law
     input type: area
     help: i.e. whether you paid rent
-  - 'Issues of fact in dispute': contested_issues_of_fact
+  - 'Issues of fact': contested_issues_of_fact
     input type: area
     help: i.e. what the law is and why it benefits your case.
-  - 'Evidence in dispute': contested_exhibits
+  - 'Evidence contested': contested_exhibits
     input type: area
     help: i.e. rent payment receipts, communications between parties, etc.
-  - 'Evidence not in dispute': uncontested_exhibits
+  - 'Evidence not contested': uncontested_exhibits
     input type: area
     help: i.e. rent payment receipts, communications between parties, etc.
 ---
 id: Building your case
 question: |
-  Provide information about witnesses and experts you and the Landlord plan to have testify at trial.
+  Tell the court about people you and the Landlord have asked to testify
 fields:
   - 'Witnesses for the landlord': plaintiff_witnesses
     input type: area
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      Write 'N/A' if there are none or you do not know.
   - 'Witnesses for the tenant': defendant_witnesses
     input type: area
-    hint: i.e. yourself
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      i.e. yourself.          
+      Write 'N/A' if there are none or you do not know.
+  - 'Are any of them experts?': are_experts
+    datatype: yesno
   - 'Experts for the landlord': plaintiff_experts
     input type: area
+    required: False
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      Write 'N/A' if there are none or you do not know.
   - 'Experts for the tenant': defendant_experts
     input type: area
+    required: False
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      Write 'N/A' if there are none or you do not know.
 ---
 id: Building your case
 question: |
-  How much time will you need to plead your case?
+  How much time do you need to plead your case?
 fields:
   - 'Your time': defendant_estimated_trial_time
     help: |
@@ -281,6 +298,7 @@ fields:
   - 'Landlords time': plaintiff_estimated_trial_time
     help: |
       i.e. 30 minutes, 1 hour, etc.
+    required: False
   - 'Date of settlement meeting': date_of_settlement_meeting
     help: |
       Whether it has already occured or will occur.
