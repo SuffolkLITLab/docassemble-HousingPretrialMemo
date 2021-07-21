@@ -151,7 +151,7 @@ id: your address
 question: |
   What is the address of the rental property?
 fields:
-  - Is this where you are currently living?: current_address
+  - This is where I am currently living: current_address
     datatype: yesno
   - Street address: users[0].address.address
     address autocomplete: True
@@ -230,12 +230,11 @@ id: Information about the tenants rental property
 question: |
   Tell the court about the property you are renting
 fields:
-  - 'Do you have a lease?': have_lease
+  - 'I do not have a lease': have_lease
     datatype: yesno
-  - 'What is the start date of the lease?': lease_start_date
-    show if: have_lease
+  - 'When did your lease start?': lease_start_date
     datatype: date
-    required: False
+    hide if: have_lease
   - 'What is the current market value of the rental property?': property_market_value
     help: 'Write N/A if not applicable or you do not know.'
 ---
