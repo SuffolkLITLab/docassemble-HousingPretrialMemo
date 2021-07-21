@@ -58,12 +58,6 @@ code: |
   users[0].address.address
   courts[0]
   have_lease
-  if have_lease == True:
-    lease_start_date
-  if are_experts == True:
-    plaintiff_experts
-  if are_experts == True:
-    defendant_experts
   other_parties.there_are_any = True
   statement_of_the_case
   contested_issues_of_fact
@@ -239,6 +233,7 @@ fields:
   - 'Do you have a lease?': have_lease
     datatype: yesno
   - 'What is the start date of the lease?': lease_start_date
+    show if: have_lease
     datatype: date
     required: False
   - 'What is the current market value of the rental property?': property_market_value
@@ -264,7 +259,7 @@ fields:
 ---
 id: Building your case
 question: |
-  Tell the court about people you and the Landlord have asked to testify
+  List the people you and the Landlord have asked to testify
 fields:
   - 'Witnesses for the landlord': plaintiff_witnesses
     input type: area
@@ -278,11 +273,13 @@ fields:
   - 'Are any of them experts?': are_experts
     datatype: yesno
   - 'Experts for the landlord': plaintiff_experts
+    show if: are_experts
     input type: area
     required: False
     help:  |
       Write 'N/A' if there are none or you do not know.
   - 'Experts for the tenant': defendant_experts
+    show if: are_experts
     input type: area
     required: False
     help:  |
