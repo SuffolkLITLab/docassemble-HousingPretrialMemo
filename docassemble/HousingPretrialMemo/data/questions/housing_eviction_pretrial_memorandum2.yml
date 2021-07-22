@@ -61,7 +61,9 @@ code: |
   other_parties.there_are_any = True
   statement_of_the_case
   contested_issues_of_fact
+  contested_exhibits
   set_progress(10.0)
+  plaintiff_witnesses
   defendant_estimated_trial_time
   date_of_settlement_meeting
   # Set the answer file name.
@@ -141,10 +143,10 @@ yesno: other_parties.there_are_any
 id: docket number
 question: |
   What is the docket number for your case?
+subquestion: The docket number is usually found in the top right corner of the Summons and Complaint.
 fields:
-  - ':': docket_number
+  - no label: docket_number
     required: False
-    hint: e.g., 000YY_ _CR _ _ _ _ _ _ _
     help: The docket number can usually be found in the top right corner of the Summons and Complaint.
 ---
 id: your address
@@ -171,7 +173,7 @@ question: |
   Please list the name of each **defendant** or respondent in this
   case below
   % else:
-  List each landlord below.
+  List each landlord below
   % endif
 subquestion: |
   Click "${word("Add another")}" to add more.
@@ -240,8 +242,9 @@ fields:
 ---
 id: Building your case
 question: |
-  Explain the issues between you and the Landlord.
-  Describe the evidence.
+  Explain the issues between you and the Landlord
+subquestion: |
+  The issue(s) of law is a brief statement of the legal reason(s) why you should not be evicted.
 fields:
   - 'Issues of law': contested_issues_of_law
     input type: area
@@ -249,6 +252,11 @@ fields:
   - 'Issues of fact': contested_issues_of_fact
     input type: area
     help: i.e. what the law is and why it benefits your case.
+---
+id: Evidence
+question: |
+  Describe the evidence
+fields:
   - 'Evidence contested': contested_exhibits
     input type: area
     help: i.e. rent payment receipts, communications between parties, etc.
@@ -269,7 +277,7 @@ fields:
     help:  |
       i.e. yourself.          
       Write 'N/A' if there are none or you do not know.
-  - 'Are any of them experts?': are_experts
+  - 'All or some witnesses are experts': are_experts
     datatype: yesno
   - 'Experts for the landlord': plaintiff_experts
     show if: are_experts
@@ -297,7 +305,7 @@ fields:
     required: False
   - 'Date of settlement meeting': date_of_settlement_meeting
     help: |
-      Whether it has already occured or will occur.
+      Whether it has already occured or will occur
     datatype: date
 ---
 progress: 100
