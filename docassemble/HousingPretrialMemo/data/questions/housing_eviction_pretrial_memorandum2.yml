@@ -62,8 +62,9 @@ code: |
   statement_of_the_case
   contested_issues_of_fact
   contested_exhibits
-  set_progress(10.0)
   plaintiff_witnesses
+  plaintiff_experts
+  set_progress(10.0)
   defendant_estimated_trial_time
   date_of_settlement_meeting
   # Set the answer file name.
