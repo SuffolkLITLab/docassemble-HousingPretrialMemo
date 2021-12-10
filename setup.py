@@ -43,7 +43,7 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.HousingPretrialMemo',
-      version='0.0.1',
+      version='0.1.0',
       description=('This pre-trial memorandum is for any tenant to use as a pro se Defendant in any housing-related proceeding.'),
       long_description='# docassemble.HousingPretrialMemo\r\n\r\nThis pre-trial memorandum is for any tenant to use as a pro se Defendant in any housing-related proceeding.\r\n\r\n## Author\r\n\r\nbsavard@suffolk.edu\r\n\r\n',
       long_description_content_type='text/markdown',

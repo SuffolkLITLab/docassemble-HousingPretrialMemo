@@ -1,19 +1,25 @@
 include:
-  - docassemble.MAVirtualCourt:basic-questions.yml
+  - docassemble.AssemblyLine:al_package.yml
+  - docassemble.MassAccess:massaccess.yml
 ---
 comment: |
   The metadata section controls the tab title and saved interview title. You can delete this section if you include this YAML file in another YAML file.
 metadata:
   title: |
-    Housing Pre-Trial Memorandum for Defendant
+    Tenant's pre-trial memorandum
   short title: |
-    Defendant's Housing Pre-Trial Memo
+    Tenant's pre-trial memo
+  authors:
+    - Brianna Savard
+    - Joelle Ataya
+    - Quinten Steenhuis
 ---
 code: |
-  interview_short_title = "Create a pre-trial memo for a housing jury trial"    
+  github_repo_name = "docassemble-HousingPretrialMemo"
 ---
-comment: |
-  This section is used by MAVirtualCourts to control how some of the questions work.
+code: |
+  interview_short_title = "Draft a pre-trial memorandum for a housing jury trial"    
+---
 mandatory: True
 code: |
   interview_metadata # make sure we initialize the object
@@ -44,21 +50,30 @@ features:
 sections:
   - review_housing_eviction_pretrial_memorandum: Review your answers
 ---
+code: |
+  al_form_type = "existing_case"
+---
+code: |
+  user_ask_role = "defendant"
+---
+objects:
+  - users: ALPeopleList.using(there_are_any=True)
+  - other_parties: ALPeopleList.using(there_are_any=True)
+---
+mandatory: True
 id: interview_order_housing_eviction_pretrial_memorandum
 code: |
   # This is a placeholder to control logic flow in this interview
 
-  basic_questions_intro_screen 
+  al_intro_screen 
   housing_eviction_pretrial_memorandum_intro
   # Set the allowed ys for this interview
   allowed_courts = interview_metadata["housing_eviction_pretrial_memorandum"]["allowed courts"]
   nav.set_section('review_housing_eviction_pretrial_memorandum')
   users.gather()
-  user_role = 'defendant'
   users[0].address.address
-  courts[0]
+  trial_court
   have_lease
-  other_parties.there_are_any = True
   statement_of_the_case
   contested_issues_of_fact
   contested_exhibits
@@ -73,7 +88,7 @@ code: |
   str(defendants)
   set_progress(30.0)
   str(plaintiffs)
-  courts[0].address.county
+  trial_court
   set_progress(40.0)
   docket_number
   signature_date
@@ -83,6 +98,7 @@ code: |
   basic_questions_signature_flow
   users[0].signature
   housing_eviction_pretrial_memorandum = True
+  download_housing_pretrial_memo
 ---
 comment: |
   This question is used to introduce your interview. Please customize
@@ -309,22 +325,29 @@ fields:
       Whether it has already occured or will occur
     datatype: date
 ---
+event: download_housing_pretrial_memo
 progress: 100
-mandatory: True
-id: Your form is ready to download and file
+id: download Your form is ready to download
 question: |
-  Your form is ready to download and file
+  Your form is ready to download
 subquestion: |
-  Thank you ${users}. Your form is ready to download and deliver.
+  Thank you ${users}. Your form is ready to download.
+  This app created a draft that you should continue to edit to make it
+  accurate.
   
   Below is a preview of your form.
   
-  ${pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['final'], filename='housing_eviction_pretrial_memorandum.pdf') }
-need: housing_eviction_pretrial_memorandum
-attachment code: housing_eviction_pretrial_memorandum_attachment['final']
+  ${ al_user_bundle.download_list_html(format="docx") }
+  
+  ${ al_user_bundle.send_button_html() }
+  
 ---
 objects:
-  - housing_eviction_pretrial_memorandum_attachment: DADict
+  - housing_eviction_pretrial_memorandum_attachment: ALDocument.using(title="Housing Pretrial Memo", filename="tenants_pretrial_memo", enabled=True)
+---
+objects:
+  - al_user_bundle: ALDocumentBundle.using(title="Housing pretrial memo", filename="tenants_pretrial_memo", enabled=True, elements=[housing_eviction_pretrial_memorandum_attachment])
+  - al_court_bundle: ALDocumentBundle.using(title="Housing pretrial memo", filename="tenants_pretrial_memo", enabled=True, elements=[housing_eviction_pretrial_memorandum_attachment])
 ---
 attachment:
     variable name: housing_eviction_pretrial_memorandum_attachment[i]
@@ -399,26 +422,22 @@ review:
     button: |
       What are the names of any experts for the Defendant/Tenant?:
       > ${ single_paragraph(defendant_experts) }
-  - Edit: courts[0].name.first
+  - Edit: trial_court
     button: |
-      courts[0]:
-      ${ courts[0] }
+      Trial court:
+      ${ trial_court }
   - Edit: users[0].name.first
     button: |
       users[0]:
       ${ users[0] }
   - Edit: defendants[0].name.first
     button: |
-      defendants:
+      Defendants:
       ${ defendants }
   - Edit: plaintiffs[0].name.first
     button: |
-      plaintiffs:
+      Plaintiffs:
       ${ plaintiffs }
-  - Edit: courts[0].address.county
-    button: |
-      courts[0].address.county:
-      ${ courts[0].address.county }
   - Edit: users[0].signature
     button: |
       users[0].signature:
