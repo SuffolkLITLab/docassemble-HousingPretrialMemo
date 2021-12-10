@@ -53,26 +53,29 @@ code: |
   # Set the allowed ys for this interview
   allowed_courts = interview_metadata["housing_eviction_pretrial_memorandum"]["allowed courts"]
   nav.set_section('review_housing_eviction_pretrial_memorandum')
+  users.gather()
   user_role = 'defendant'
   users[0].address.address
-  users.there_is_another = False
-  other_parties.there_are_any = False
+  courts[0]
+  have_lease
+  other_parties.there_are_any = True
   statement_of_the_case
   contested_issues_of_fact
+  contested_exhibits
+  plaintiff_witnesses
+  plaintiff_experts
   set_progress(10.0)
   defendant_estimated_trial_time
   date_of_settlement_meeting
   # Set the answer file name.
   set_parts(subtitle=str(users))
   set_progress(20.0)
-  courts[0]
-  users[0]
   str(defendants)
   set_progress(30.0)
   str(plaintiffs)
   courts[0].address.county
   set_progress(40.0)
-  docket_number[0]
+  docket_number
   signature_date
   # Save (anonymized) interview statistics.
   store_variables_snapshot(data={'zip': users[0].address.zip})
@@ -88,7 +91,7 @@ continue button field: housing_eviction_pretrial_memorandum_intro
 question: |
   Housing Pre-Trial Memorandum for Defendant
 subquestion: |
-  This is a pre-trial memorandum for the Defendant (Tenant) to provide to the Court during a scheduled pre-trial conference regarding a possible eviction.
+  This is a letter to be completed before trial by the defendant (tenant) for the Court if the plaintiff (landlord) is threatening eviction.
 ---
 id: Review your form before you sign it
 continue button field: housing_eviction_pretrial_memorandum_preview_question
@@ -99,83 +102,211 @@ subquestion: |
   
    ${ pdf_concatenate(housing_eviction_pretrial_memorandum_attachment['preview'], filename='housing_eviction_pretrial_memorandum.pdf')}
 ---
+id: your name
+question:  |
+  What is your name?
+fields:
+  - First Name: users[0].name.first
+  - Middle Name: users[0].name.middle
+    required: False
+  - Last Name: users[0].name.last
+  - Suffix: users[0].name.suffix
+    code: |
+      name_suffix()
+    required: False  
+---
+id: any other users
+question: |
+  Is another tenant filing with you?
+yesno: users.there_is_another 
+---
+id: other users names
+question: |
+  What is the name of the ${ ordinal(i) } tenant?
+fields:
+  - First Name: users[i].name.first
+  - Middle Name: users[i].name.middle
+    required: False
+  - Last Name: users[i].name.last
+  - Suffix: users[i].name.suffix
+    code: name_suffix()
+    required: False
+---
+id: is there an opposing party?
+question: |
+  % if users == plaintiffs:
+  Is there a **defendant** or respondent in this case? 
+  % else:
+  Is there a **plaintiff** or landlord in this case?
+  % endif
+yesno: other_parties.there_are_any
+---
 id: docket number
 question: |
   What is the docket number for your case?
+subquestion: The docket number is usually found in the top right corner of the Summons and Complaint.
 fields:
   - no label: docket_number
     required: False
-continue button field: ask_docket_number
+    help: The docket number can usually be found in the top right corner of the Summons and Complaint.
+---
+id: your address
+question: |
+  What is the address of the rental property?
+fields:
+  - This is where I am currently living: current_address
+    datatype: yesno
+  - Street address: users[0].address.address
+    address autocomplete: True
+  - Unit: users[0].address.unit
+    required: False
+  - City: users[0].address.city
+  - State: users[0].address.state
+    code: |
+      states_list()
+    default: MA      
+  - Zip: users[0].address.zip
+    required: False
+---
+id: names of opposing parties
+question: |
+  % if users==plaintiffs:
+  Please list the name of each **defendant** or respondent in this
+  case below
+  % else:
+  List each landlord below
+  % endif
+subquestion: |
+  Click "${word("Add another")}" to add more.
+list collect: 
+  enable: True
+  label: |
+    % if users==plaintiffs:
+    Defendant/Respondent ${i+1}    
+    % else:
+     ${i+1})
+    % endif
+fields:
+  - Is the landlord a person or a business?: other_parties[i].person_type
+    input type: radio
+    choices:
+      - Business or organization: business
+      - Person: individual
+  - First name: other_parties[i].name.first
+    show if:
+      variable: other_parties[i].person_type
+      is: "individual"
+  - Last name: other_parties[i].name.last
+    show if:
+      variable: other_parties[i].person_type      
+      is: "individual"
+  - Suffix: other_parties[i].name.suffix
+    code: |
+      name_suffix()
+    show if:
+      variable: other_parties[i].person_type      
+      is: "individual"
+    required: False      
+  - Name of organization or business: other_parties[i].name.first
+    show if:
+      variable: other_parties[i].person_type
+      is: business
+---
+id: signature date
+question: |
+  When will you file this memorandum?
+subquestion: |
+  The default is "today". Change the date if you plan to file another day.
+fields: 
+  - Date: signature_date
+    datatype: date
+    default: ${today().format("yyyy-MM-dd")}
 ---
 id: Building your case
 question: |
-  Explain why you are in court.
-subquestion: |
-  Include what your argument is and what relief you are requesting.
+  Tell the court why the landlord should not evict you
 fields:
-  - 'Statement:': statement_of_the_case
-    input type: areawide
+  - 'What help are you asking from the court?': statement_of_the_case
+    input type: area
 ---
 id: Information about the tenants rental property
 question: |
-  Provide information about the property in dispute.
+  Tell the court about the property you are renting
 fields:
-  - 'What date did the lease begin on?': lease_start_date
+  - 'I do not have a lease': have_lease
+    datatype: yesno
+  - 'When did your lease start?': lease_start_date
     datatype: date
+    hide if: have_lease
   - 'What is the current market value of the rental property?': property_market_value
-    help: 'Write N/A if not applicable or not know'
+    help: 'Write N/A if not applicable or you do not know.'
 ---
 id: Building your case
 question: |
-  Explain in detail the issues you and the Landlord are having.
-  Include a description of evidence.
+  Explain the issues between you and the Landlord
+subquestion: |
+  The issue(s) of law is a brief statement of the legal reason(s) why you should not be evicted.
 fields:
-  - 'Issues of law in dispute': contested_issues_of_law
+  - 'Issues of law': contested_issues_of_law
     input type: area
-    hint: i.e. whether you paid rent
-  - 'Issues of fact in dispute': contested_issues_of_fact
+    help: i.e. whether you paid rent
+  - 'Issues of fact': contested_issues_of_fact
     input type: area
-    hint: i.e. what the law is and why it benefits your case.
-  - 'Evidence in dispute': contested_exhibits
+    help: i.e. what the law is and why it benefits your case.
+---
+id: Evidence
+question: |
+  Describe the evidence
+fields:
+  - 'Evidence contested': contested_exhibits
     input type: area
-    hint: i.e. rent payment receipts, communications between parties, etc.
-  - 'Evidence not in dispute': uncontested_exhibits
+    help: i.e. rent payment receipts, communications between parties, etc.
+  - 'Evidence not contested': uncontested_exhibits
     input type: area
-    hint: i.e. rent payment receipts, communications between parties, etc.
+    help: i.e. rent payment receipts, communications between parties, etc.
 ---
 id: Building your case
 question: |
-  Provide information about witnesses and experts you and the Landlord plan to have testify at trial.
+  List the people you and the Landlord have asked to testify
 fields:
   - 'Witnesses for the landlord': plaintiff_witnesses
     input type: area
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      Write 'N/A' if there are none or you do not know.
   - 'Witnesses for the tenant': defendant_witnesses
     input type: area
-    hint: i.e. yourself
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      i.e. yourself.          
+      Write 'N/A' if there are none or you do not know.
+  - 'All or some witnesses are experts': are_experts
+    datatype: yesno
   - 'Experts for the landlord': plaintiff_experts
+    show if: are_experts
     input type: area
+    required: False
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      Write 'N/A' if there are none or you do not know.
   - 'Experts for the tenant': defendant_experts
+    show if: are_experts
     input type: area
+    required: False
     help:  |
-      Write 'N/A' if there are non or you do not know.
+      Write 'N/A' if there are none or you do not know.
 ---
 id: Building your case
 question: |
-  Estimate how much  trial time you and the Landlord will need to plead your cases, and provide details about a settlement meeting.
+  How much time do you need to plead your case?
 fields:
-  - 'Your estimated time to plead case': defendant_estimated_trial_time
-    hint: |
+  - 'Your time': defendant_estimated_trial_time
+    help: |
       i.e. 30 minutes, 1 hour, etc.
-  - 'Landlord estimated time to plead case': plaintiff_estimated_trial_time
-    hint: |
+  - 'Landlords time': plaintiff_estimated_trial_time
+    help: |
       i.e. 30 minutes, 1 hour, etc.
-  - 'Date settlement meeting has occured or will occur': date_of_settlement_meeting
+    required: False
+  - 'Date of settlement meeting': date_of_settlement_meeting
+    help: |
+      Whether it has already occured or will occur
     datatype: date
 ---
 progress: 100
@@ -223,7 +354,7 @@ review:
   - Edit: users[0].address.address
     button: |
       What is your address?:
-      ${ users[0].address.address }
+      ${ users[0].address.on_one_line() }
   - Edit: property_market_value
     button: |
       What is the current market value of the rental property? (If you do not know, write "Not Known"):
@@ -292,14 +423,10 @@ review:
     button: |
       users[0].signature:
       ${ users[0].signature }
-  - Edit: users[0].address.address
+  - Edit: docket_number
     button: |
-      users[0].address.address:
-      ${ users[0].address.address }
-  - Edit: docket_number[0].name.first
-    button: |
-      docket_number[0]:
-      ${ docket_number[0] }
+      docket_number:
+      ${ docket_number }
   - Edit: signature_date
     button: |
       signature_date:
