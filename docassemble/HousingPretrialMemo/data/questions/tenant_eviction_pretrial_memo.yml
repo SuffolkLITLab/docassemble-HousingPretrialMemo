@@ -353,7 +353,7 @@ attachment:
     variable name: housing_eviction_pretrial_memorandum_attachment[i]
     name: Defendant's Housing Pre-Trial Memo
     filename: Defendants_Housing_PreTrial_Memo
-    docx template file: Pretrial_memo_code5.docx
+    docx template file: tenant_eviction_pretrial_memo.docx
 ---
 id: housing_eviction_pretrial_memorandum review screen
 event: review_housing_eviction_pretrial_memorandum
